@@ -9,19 +9,6 @@
 #include <pthread.h>
 #include <sys/time.h>
 
-typedef struct  s_philo_thread
-{
-    int                 id;
-    pthread_t           thread_id;
-    pthread_t           thread_death_id;
-    pthread_mutex_t     fork_letf;
-    pthread_mutex_t     *fork_right;
-    //t_arg             *pa;
-    long int            ms_eat;
-    unsigned int        meals_eaten;
-    int                 finish;
-}   t_philo_thread;
-
 typedef struct  s_philo_arg
 {
     int                 number_of_philosophers;
@@ -38,6 +25,20 @@ typedef struct  s_philo_arg
     int                 nb_of_philo_finish;
     
 }   t_philo_arg;
+
+typedef struct  s_philo_thread
+{
+    int                 id;
+    pthread_t           thread_id;
+    pthread_t           thread_death_id;
+    pthread_mutex_t     fork_letf;
+    pthread_mutex_t      *fork_right;
+    t_philo_arg        *pa;
+    long int            ms_eat;
+    unsigned int        meals_eaten;
+    int                 finish;
+}   t_philo_thread;
+
 
 typedef struct s_philo
 {
@@ -63,5 +64,7 @@ int     main(int argc, char **argv);
 /*
     routine.c
 */
+int	threading(t_philo *philospher);
+void	*start_routine(void *data);
 
 #endif
