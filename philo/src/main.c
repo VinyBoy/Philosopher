@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vnieto-j <vnieto-j@student.42.fr>          +#+  +:+       +#+        */
+/*   By: viny <viny@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 15:55:04 by vnieto-j          #+#    #+#             */
-/*   Updated: 2023/10/30 17:11:28 by vnieto-j         ###   ########.fr       */
+/*   Updated: 2023/10/31 17:52:53 by viny             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@ void print_error(int error)
 		printf("Allocation fail\n");
 	else if (error == 2)
 		printf("Bad creation of thread\n");
+	else if (error == 3)
+		printf("Bad attribution of actual time\n");
 	exit(1);
 }
 
