@@ -45,7 +45,7 @@ INC_DIR	=	./include/
 CC	=	cc 
 
 #gcc -pthread main.c
-CFLAGS	= -Wall -Wextra -Werror -I$(INC_DIR)
+CFLAGS	= -Wall -Wextra -Werror -I$(INC_DIR) -pthread
 
 RM	=	rm -rf
 

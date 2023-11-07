@@ -3,58 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   routine.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: viny <viny@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: vnieto-j <vnieto-j@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/19 15:16:08 by vnieto-j          #+#    #+#             */
-/*   Updated: 2023/11/02 15:41:15 by viny             ###   ########.fr       */
+/*   Updated: 2023/11/07 19:22:06 by vnieto-j         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/philo.h"
 
-/*
-	@brief-> Fonction de thread, thread qui fonctionne en parallele avec chaque philo
-			Pour savoir si celui ci est mort ou non (si il na pas manger dans le delai
-			imparti).
-*/
-void	*is_dead(void	*data)
-{
-	
-}
-/*
-	@Brief-> Fonction qui check si un philo est mort. Renvoie 1 si mort, 0 si vivant
-	
-	@params-> Pointeur sur ma strucutre t_philo et un entier i
-*/
-int	check_death(t_philo_thread *philosopher, int i)
-{
-	pthread_mutex_lock(&philosopher->pa->dead);
-	if (i)
-		philosopher->pa->stop = i;
-	}
-
-
-
-void	*start_routine(void *data)
-{
-	t_philo_thread		*philosopher;
-	
-	philosopher = (t_philo_thread *)data;
-	//Si le nombre d'id (nombre de philo) est paire alors
-	if (philosopher->id % 2 == 0)
-		ft_usleep(philosopher->pa->time_eat / 10);
-	while (!check_death(philosopher, 0))
-	{
-		pthread_create(&philosopher->thread_death_id, NULL, is_dead, data) 
-	
-}
-
-/*
-	@brief -> Creer chaque thread pour chaque philo en iterant sur notre structure contentant tout nos philo
-	
-	@params -> Pointeur sur notre structure de type t_philo
-
-*/
 int	threading(t_philo *philospher)
 {
 	int	i;
@@ -70,6 +27,95 @@ int	threading(t_philo *philospher)
 	}
 	return (1);
 }
+
+void	*start_routine(void *data)
+{
+	t_philo_thread	*philosopher;
+
+	philosopher = (t_philo_thread *)data;
+	if(philosopher->id % 2 == 0)
+		ft_usleep(philosopher->pa->time_to_eat / 10);
+	while( !check_death(philosopher, 0))
+	{
+		//fonction qui va creer un thread pour surveiller la mort du thread appelant
+		pthread_create(&philosopher->thread_death_id, NULL, is_dead, data);
+		activity(philosopher);
+		pthread_detach(philosopher->thread_death_id);
+		if ((int)++philosopher->meals_eaten ==
+			philosopher->pa->nb_of_time_each_philo_must_eat)
+		{
+			pthread_mutex_lock(&philosopher->pa->finish);
+			philosopher->finish = 1;
+			philosopher->pa->nb_of_philo_finish++;
+			if (philosopher->pa->nb_of_philo_finish == philosopher->pa->number_of_philosophers)
+			{
+				pthread_mutex_unlock(&philosopher->pa->finish);
+				check_death(philosopher, 2);
+			}
+			pthread_mutex_unlock(&philosopher->pa->finish);
+			return (NULL);
+		}
+	}
+}
+/*
+	@brief-> Fonction de thread, thread qui fonctionne en parallele avec chaque philo
+			Pour savoir si celui ci est mort ou non (si il na pas manger dans le delai
+			imparti).
+*/
+void	*is_dead(void	*data)
+{
+	t_philo_thread *philosopher;
+	
+	philosopher = (t_philo_thread *)data;
+	ft_usleep(philosopher->pa->time_to_die + 1);
+	//mutex pour mettre a jour le dernier temps de repas
+	pthread_mutex_lock(&philosopher->pa->time_eat);
+	//mutex pour indiquer si un philo a finit ses repas
+	pthread_mutex_lock(&philosopher->pa->finish);
+	if (!check_death(philosopher, 0) && !philosopher->finish
+		&& ((actual_time() - philosopher->ms_eat) >= 
+		(long)(philosopher->pa->time_to_die)))
+	{
+		pthread_mutex_unlock(&philosopher->pa->time_eat);
+		pthread_mutex_unlock(&philosopher->pa->finish);
+		pthread_mutex_lock(&philosopher->pa->write_mutex);
+		write_status("died\n", philosopher);
+		pthread_mutex_unlock(&philosopher->pa->write_mutex);
+		check_death(philosopher, 1);
+	}
+	pthread_mutex_unlock(&philosopher->pa->time_eat);
+	pthread_mutex_unlock(&philosopher->pa->finish);
+	return (NULL);
+	
+}
+/*
+	@Brief-> Fonction qui check si un philo est mort. Renvoie 1 si mort, 0 si vivant
+	
+	@params-> Pointeur sur ma strucutre t_philo et un entier i
+*/
+int	check_death(t_philo_thread *philosopher, int i)
+{
+	pthread_mutex_lock(&philosopher->pa->dead);
+	if (i)
+		philosopher->pa->stop = i;
+	if (philosopher->pa->stop == 1)
+	{
+		pthread_mutex_unlock(&philosopher->pa->dead);
+		return (1);
+	}
+	pthread_mutex_unlock(&philosopher->pa->dead);
+	return (0);
+}
+
+
+
+
+/*
+	@brief -> Creer chaque thread pour chaque philo en iterant sur notre structure contentant tout nos philo
+	
+	@params -> Pointeur sur notre structure de type t_philo
+
+*/
 
 /*
 	@brief -> Fonction qui va permettre de mettre le programme en pause pendant un temps
@@ -109,7 +155,6 @@ long	int	actual_time(void)
 		return(print_error(3), 1);
 	time = (actual_time.tv_sec * 1000) + (actual_time.tv_usec / 1000);
 	return (time);
-	
 }
 
 /*
