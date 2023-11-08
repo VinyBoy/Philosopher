@@ -6,7 +6,7 @@
 /*   By: vnieto-j <vnieto-j@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/19 15:16:08 by vnieto-j          #+#    #+#             */
-/*   Updated: 2023/11/07 19:22:06 by vnieto-j         ###   ########.fr       */
+/*   Updated: 2023/11/08 16:35:49 by vnieto-j         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,7 @@ void	*start_routine(void *data)
 			return (NULL);
 		}
 	}
+	return (NULL);
 }
 /*
 	@brief-> Fonction de thread, thread qui fonctionne en parallele avec chaque philo

@@ -1,9 +1,6 @@
 # ifndef    PHILO_H
 #  define  PHILO_H
 
-
-
-#include "../Ft_printf/ft_printf.h"
 #include <stdlib.h>
 #include <limits.h>
 #include <pthread.h>
@@ -64,7 +61,23 @@ int     main(int argc, char **argv);
 /*
     routine.c
 */
-int	threading(t_philo *philospher);
+int     threading(t_philo *philospher);
 void	*start_routine(void *data);
+void	*is_dead(void	*data);
+int	check_death(t_philo_thread *philosopher, int i);
+
+/*
+    activity.c
+*/
+void    write_status(char *str, t_philo_thread *philosopher);
+void	sleep_think(t_philo_thread *philosopher);
+void    activity(t_philo_thread *philospher);
+
+/*
+    utils.c
+*/
+void	ft_usleep(long int time_in_ms);
+long	int	actual_time(void);
+int	    ft_strcmp(const char *s1, const char *s2);
 
 #endif

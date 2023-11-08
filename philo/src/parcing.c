@@ -6,7 +6,7 @@
 /*   By: vnieto-j <vnieto-j@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 15:54:45 by vnieto-j          #+#    #+#             */
-/*   Updated: 2023/11/07 17:32:55 by vnieto-j         ###   ########.fr       */
+/*   Updated: 2023/11/08 16:34:50 by vnieto-j         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@
 
 int parse_args(int argc, char **argv, t_philo *philosopher)
 {
-    if ((argc != 5 || argv != 6) && (is_digit(argv, 1, 0) == 0))
+    if ((argc == 5 || argc == 6) && (is_digit(argv, 1, 0) == 0))
     {
         philosopher->arg.number_of_philosophers = ft_atoi_ovrflw(argv[1]);
         philosopher->arg.time_to_die = ft_atoi_ovrflw(argv[2]);

@@ -44,7 +44,7 @@ INC_DIR	=	./include/
 
 CC	=	cc
 
-CFLAGS	= -Wall -Wextra -Werror -I$(INC_DIR) -pthread
+CFLAGS	= -fsanitize=thread -g -Wall -Wextra -Werror -I$(INC_DIR) -pthread
 
 RM	=	rm -rf
 
